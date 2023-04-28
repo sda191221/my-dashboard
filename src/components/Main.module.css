@@ -1,0 +1,17 @@
+/* Default styles for .main */
+.main {
+  flex-grow: 1;
+  padding-left: 300px;
+  padding-top: 100px;
+  overflow: auto;
+  z-index: 9999;
+}
+
+/* Styles for screens smaller than 600px */
+@media (max-width: 600px) {
+  .main {
+    padding-left: 10px;
+    padding-top: 50px;
+    z-index: 1000;
+  }
+}

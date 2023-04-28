@@ -1,7 +1,7 @@
 
-
+import classes from './Main.module.css'
 const Main = (props) => {
-    return props.children;
+    return (<div className={classes.main}>{props.children}</div>);
 };
 
 export default Main;

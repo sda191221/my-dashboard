@@ -2,9 +2,9 @@ import React, { useMemo, useState, useEffect } from 'react'
 import { useTable, useFilters, useSortBy, usePagination, useGlobalFilter } from 'react-table'
 //import data from './MOCK_DATA.json'
 import { COLUMNS } from './Columns'
-import { ColumnFilter } from './ColumnFilter'
-import { GlobalFilter } from './GlobalFilter'
-import './Users.css'
+import { ColumnFilter } from './ColumnFilter/ColumnFilter'
+import { GlobalFilter } from './GlobalFilter/GlobalFilter'
+import classes from './Users.module.css'
 import moment from 'moment';
 import axios from 'axios'
 
@@ -76,38 +76,47 @@ function Users() {
 
     return (
         <>
-            <div className="globalFilter"><GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} /></div>
+            <h1 className={classes.tableHeading}>User's Data</h1>
+            <div className={classes.globalFilter}><GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} /></div>
             <table {...getTableProps()}>
                 <thead>
                     {headerGroups.map(headerGroup => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map(column => (
-                                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                <th {...column.getHeaderProps(column.getSortByToggleProps())} className={column.className}>
                                     {column.render('Header')}
-                                    <div>{column.canFilter ? column.render('Filter') : null}</div>
-                                    <span>
+                                    <span className={classes.sortingIcon}>
                                         {column.isSorted
                                             ? column.isSortedDesc
                                                 ? ' 🔽'
                                                 : ' 🔼'
-                                            : ''}
+                                            : '⏹'}
                                     </span>
+
+                                    <div>{column.canFilter ? column.render('Filter') : null}</div>
+
                                 </th>
                             ))}
                         </tr>
                     ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                    {page.map(row => {
-                        prepareRow(row)
-                        return (
-                            <tr {...row.getRowProps()}>
-                                {row.cells.map(cell => {
-                                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                })}
-                            </tr>
-                        )
-                    })}
+                    {page.length > 0 ? (
+                        page.map(row => {
+                            prepareRow(row)
+                            return (
+                                <tr {...row.getRowProps()} >
+                                    {row.cells.map(cell => {
+                                        return <td {...cell.getCellProps()} className={classes.centerColumn}>{cell.render('Cell')}</td>
+                                    })}
+                                </tr>
+                            )
+                        })
+                    ) : (
+                        <tr>
+                            <td colSpan={columns.length}>No data found</td>
+                        </tr>
+                    )}
                 </tbody>
 
 
@@ -137,10 +146,17 @@ function Users() {
                         type='number'
                         defaultValue={pageIndex + 1}
                         onChange={e => {
-                            const pageNumber = e.target.value ? Number(e.target.value) - 1 : 0
-                            gotoPage(pageNumber)
+                            const pageNumber = e.target.value ? Number(e.target.value) : pageIndex + 1
+                            if (pageNumber >= 1 && pageNumber <= pageCount) {
+                                gotoPage(pageNumber - 1)
+                            } else {
+                                const errorMessage = pageNumber < 1 ? `Page number cannot be less than 1.` : `Page number cannot be greater than ${pageCount}.`
+                                alert(errorMessage)
+                                e.target.value = pageIndex + 1
+                            }
                         }}
-                        style={{ width: '50px' }}
+                        className={classes.inputPage}
+                        max={pageCount}
                     />
                 </span>{' '}
                 <select
@@ -159,5 +175,3 @@ function Users() {
 }
 
 export default Users;
-
-

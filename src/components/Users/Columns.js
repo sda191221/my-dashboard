@@ -32,7 +32,8 @@ export const COLUMNS = [
     Footer: 'Id',
     accessor: 'id',
     disableFilters: true,
-    sticky: 'left'
+    sticky: 'left',
+    className: 'centerColumn'
   },
   {
     Header: 'First Name',
@@ -72,7 +73,8 @@ export const COLUMNS = [
   {
     Header: 'Age',
     Footer: 'Age',
-    accessor: 'age'
+    accessor: 'age',
+    className: 'centerColumn'
   },
 ]
 

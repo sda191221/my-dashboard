@@ -1,0 +1,14 @@
+.searchContainer {
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .searchIcon {
+    font-size: 16px;
+    margin-right: 5px;
+  }
+  
+  .searchInput {
+    margin-bottom: 5px;
+    margin-right: 5px;
+  }

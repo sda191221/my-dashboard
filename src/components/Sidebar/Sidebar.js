@@ -1,89 +1,126 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { FaUser, FaImage, FaCloudSun, FaAngleDoubleRight } from 'react-icons/fa';
+import { FaUser, FaImage, FaCloudSun, FaAngleDoubleRight, FaBars, FaTimes } from 'react-icons/fa';
 import { useContext } from 'react';
 import { AuthContext } from '../../auth/AuthContext';
-import './Sidebar.css'
+import classes from './Sidebar.module.css';
+//import './Sidebar.css';
+
 const Sidebar = () => {
     const location = useLocation();
-    const navigate = useNavigate(); // Add useNavigate hook
+    const navigate = useNavigate();
     const [activeLink, setActiveLink] = useState('users');
     const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+    const [sidebarOpen, setSidebarOpen] = useState(false); // Add state variable for sidebar open/closed
+    const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setViewportWidth(window.innerWidth);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
     useEffect(() => {
         const path = location.pathname;
 
         if (path === '/signOut') {
             setActiveLink('/signIn')
+            navigate('/signIn')
         }
         else {
             setActiveLink(path);
         }
+        // eslint-disable-next-line
     }, [location]);
+
+    useEffect(() => {
+        const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
+        if (storedIsLoggedIn) {
+            setIsLoggedIn(JSON.parse(storedIsLoggedIn));
+        }
+        // eslint-disable-next-line
+    }, []);
 
     const handleLinkClick = (link) => {
         setActiveLink('/signIn');
         if (link === 'signOut') {
 
             setIsLoggedIn(false);
-            navigate('/signIn'); // Navigate to signIn page
+            localStorage.setItem('isLoggedIn', false);
+            navigate('/signIn');
         }
     };
-    return (
-        <nav className="sidebar">
-            <div className="sidebar-header">
-                <h3>My Dashboard</h3>
-            </div>
-            <ul className="nav flex-column">
-                <li className="nav-item">
-                    <Link
-                        to="/"
-                        className={`nav-link ${activeLink === '/' ? 'nav-link-active' : ''}`}
-                        onClick={() => handleLinkClick('/')}
-                    >
-                        <FaUser className="mr-2" /> Users
-                    </Link>
-                </li>
-                <li className="nav-item">
-                    <Link
-                        to="/gallery"
-                        className={`nav-link ${activeLink === '/gallery' ? 'nav-link-active' : ''}`}
-                        onClick={() => handleLinkClick('gallery')}
-                    >
-                        <FaImage className="mr-2" /> Gallery
-                    </Link>
-                </li>
-                <li className="nav-item">
-                    <Link
-                        to="/weather"
-                        className={`nav-link ${activeLink === '/weather' ? 'nav-link-active' : ''}`}
-                        onClick={() => handleLinkClick('weather')}
-                    >
-                        <FaCloudSun className="mr-2" /> Weather
-                    </Link>
-                </li>
 
-                <li className="nav-item">
-                    {isLoggedIn ? (
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
+
+    return (
+        <div className={classes.container}>
+            {viewportWidth <= 768 ? (
+                <button className={classes.sidebarToggle} onClick={toggleSidebar}>
+                    {sidebarOpen ? <FaTimes /> : <FaBars />}
+                </button>
+            ) : null}
+            <nav className={`${classes.sidebar} ${sidebarOpen ? classes.open : ''}`}>
+                <div className={classes.sidebarHeader}>
+                    <h3>My Dashboard</h3>
+                </div>
+                <ul className={`${classes.nav} flex-column`}>
+                    <li className={classes.navItem}>
                         <Link
-                            to="/signOut"
-                            className={`nav-link ${activeLink === '/signOut' ? 'nav-link-active' : ''}`}
-                            onClick={() => handleLinkClick('signOut')}
+                            to="/"
+                            className={`${classes.navLink} ${activeLink === '/' ? classes.navLinkActive : ''}`}
+                            onClick={() => handleLinkClick('/')}
                         >
-                            <FaAngleDoubleRight className="mr-2" /> Sign Out
+                            <FaUser /> Users
                         </Link>
-                    ) : (
+                    </li>
+                    <li className={classes.navItem}>
                         <Link
-                            to="/signIn"
-                            className={`nav-link ${activeLink === '/signIn' ? 'nav-link-active' : ''}`}
-                            onClick={() => handleLinkClick('signIn')}
+                            to="/gallery"
+                            className={`${classes.navLink} ${activeLink === '/gallery' ? classes.navLinkActive : ''}`}
+                            onClick={() => handleLinkClick('gallery')}
                         >
-                            <FaAngleDoubleRight className="mr-2" /> Sign In
+                            <FaImage /> Gallery
                         </Link>
-                    )}
-                </li>
-            </ul>
-        </nav>
+                    </li>
+                    <li className={classes.navItem}>
+                        <Link
+                            to="/weather"
+                            className={`${classes.navLink} ${activeLink === '/weather' ? classes.navLinkActive : ''}`}
+                            onClick={() => handleLinkClick('weather')}
+                        >
+                            <FaCloudSun /> Weather
+                        </Link>
+                    </li>
+
+                    <li className={classes.navItem}>
+                        {isLoggedIn ? (
+                            <Link
+                                to="/signOut"
+                                className={`${classes.navLink} ${activeLink === '/signOut' ? classes.navLinkActive : ''}`}
+                                onClick={() => handleLinkClick('signOut')}
+                            >
+                                <FaAngleDoubleRight /> Sign Out
+                            </Link>
+                        ) : (
+                            <Link to="/signIn"
+                                className={`${classes.navLink} ${activeLink === '/signIn' ? classes.navLinkActive : ''}`}
+                                onClick={() => handleLinkClick('signIn')}
+                            >
+                                <FaAngleDoubleRight /> Sign In
+                            </Link>
+                        )}
+                    </li>
+                </ul>
+            </nav>
+        </div>
     );
 };
 

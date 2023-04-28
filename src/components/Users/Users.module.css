@@ -1,0 +1,59 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 14px;
+}
+.tableHeading {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+ 
+}
+
+thead {
+  background-color: #f2f2f2;
+}
+th{
+  text-align: center;
+}
+th,
+td {
+  
+  padding: 8px;
+  border: 1px solid #ddd;
+  width: fit-content;
+}
+
+th {
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+.centerColumn {
+  text-align: center;
+}
+.sortingIcon{
+  padding-left: 5px
+}
+input[type="search"] {
+  min-width: 20px;
+}
+
+.inputPage{
+  width: 80px               
+                        
+}
+.globalFilter {
+  float: right;
+}
+select{
+  width: 100px;
+  height: 30px;
+}

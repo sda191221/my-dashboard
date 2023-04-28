@@ -9,39 +9,36 @@ import SignIn from './components/SignIn_SignUp/SignIn/SignIn';
 import SignUp from './components/SignIn_SignUp/SignUp/SignUp';
 import Main from './components/Main'
 import AuthProvider from './auth/AuthProvider';
-// import { useContext } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import './App.css';
 
+// 4,5, 12,13, 14, 16  signIn validation and field
 const queryClient = new QueryClient();
 
 const App = () => {
 
-  // const handleSignOut = () => {
-  //   onSignOut(setIsLoggedIn);
-  // };
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Router>
-          <div style={{ display: 'flex', flexWrap: 'nowrap' }}>
-            <Sidebar />
-            <Main>
-              <div style={{ flexGrow: 1, paddingLeft: '300px', paddingTop: '100px', overflow: 'auto' }}>
-                <Routes>
-                  <Route path="/" element={<Users />} />
+          <div >
+            <Sidebar className='sidebar' />
+            <Main className='main'>
 
-                  <Route path="/gallery" element={<Gallery />} />
+              <Routes>
+                <Route key="users" path="/" element={<Users />} />
 
-                  <Route path="/weather" element={<Weather />} />
-                  <Route path="/signIn" element={<SignIn />} />
+                <Route key="gallery" path="/gallery" element={<Gallery />} />
 
-                  <Route path="/signUp" element={<SignUp />} />
-                  <Route path="/signOut" element={<SignIn />} />
+                <Route key="weather" path="/weather" element={<Weather />} />
+                <Route key="signin" path="/signIn" element={<SignIn />} />
 
-                </Routes>
-              </div>
+                <Route key="signup" path="/signUp" element={<SignUp />} />
+                <Route key="signout" path="/signOut" element={<SignIn />} />
+
+              </Routes>
+
             </Main>
           </div>
         </Router >

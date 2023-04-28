@@ -1,0 +1,12 @@
+.error{
+  color: red;
+  font-size: 0.8rem; 
+  margin-top: -8px;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .signin-container {
+      z-index: 1;
+    }
+  }

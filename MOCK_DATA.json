@@ -2199,6 +2199,17 @@
       "age": 27,
       "country": "Azerbaijan",
       "phone": "6728688611"
+    },
+    {
+      "id": 201,
+      "first_name": "test1",
+      "last_name": "test1",
+      "email": "test@gmail.com",
+      "password": "123456",
+      "date_of_birth": "12/12/2002",
+      "age": "20",
+      "country": "India",
+      "phone": "1234567890"
     }
   ]
 }

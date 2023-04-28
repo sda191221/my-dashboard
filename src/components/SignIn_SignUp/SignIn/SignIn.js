@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-//import data from '../Users/MOCK_DATA.json';
-import './SignIn.css'
 import { useContext } from 'react';
 import { AuthContext } from '../../../auth/AuthContext';
 import axios from 'axios';
+import {
+    Button,
+    Typography,
+    Box
+} from '@mui/material';
+import { CustomTextField } from './Styles/CustomTextField'
+import classes from './SignIn.module.css'
 
 const SignIn = () => {
     const [users, setUsers] = useState([]);
@@ -21,15 +26,7 @@ const SignIn = () => {
         };
         fetchData();
     }, []);
-    // useEffect(() => {
-    //     setUsers(data.data);
-    //     //console.log('Users', users);
-    // }, [users]);
-    // useEffect(() => {
-    //     if (isLoggedIn) {
-    //         navigate('/signIn');
-    //     }
-    // }, [isLoggedIn, navigate]);
+
     const initialValues = { email: '', password: '' };
     const validationSchema = Yup.object({
         email: Yup.string()
@@ -41,6 +38,7 @@ const SignIn = () => {
     });
 
     const handleSubmit = (values, { setSubmitting }) => {
+        console.log("Submitted");
         setSubmitting(true);
         handleSignIn(values);
         setSubmitting(false);
@@ -52,13 +50,14 @@ const SignIn = () => {
         navigate('/signup')
     };
 
-    const handleReset = (values, { resetForm }) => {
-        resetForm();
+    const handleReset = (values, { setSubmitting }) => {
+        //resetForm();
+        navigate('/signIn');
+        setSubmitting(false);
     };
 
     const handleSignIn = (values) => {
         const { email, password } = values;
-
 
         const user = users.find((u) => u.email === email);
 
@@ -67,54 +66,126 @@ const SignIn = () => {
 
             setLoginUser(user);
             setIsLoggedIn(true);
+
+            // store login status in cookie
+            // Cookies.set('isLoggedIn', true);
+            localStorage.setItem('isLoggedIn', true);
+
             navigate('/signIn');
             console.log(isLoggedIn);
 
         } else {
+            console.log(email, password);
             console.log('Sign-in failed: incorrect email or password');
         }
     };
 
+
+    useEffect(() => {
+        const isLoggedInStorage = localStorage.getItem('isLoggedIn');
+        if (isLoggedInStorage === 'true') {
+            setIsLoggedIn(true);
+        }
+        // eslint-disable-next-line
+    }, []);
+
     return (
-        <div>
+        <Box
+            display="flex"
+            alignItems="center"
+            marginTop={5}
+            marginBottom={5}
+            flexDirection="row"
+            className="signin-container"
+        >
             {!isLoggedIn ?
-                <div>
-                    <h1>Sign In</h1>
+                <Formik
+                    initialValues={initialValues}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                    onReset={handleReset}
+                >
+                    {({ isSubmitting }) => (
+                        <Form
+                            component={Box}
+                            display="flex"
 
-                    <Formik
-                        initialValues={initialValues}
-                        validationSchema={validationSchema}
-                        onSubmit={handleSubmit}
-                    >
-                        {({ isSubmitting }) => (
-                            <Form>
-                                <div>
-                                    <label htmlFor="email">Email </label>
-                                    <Field type="email" name="email" />
-                                    <ErrorMessage name="email" />
-                                </div>
-                                <div>
-                                    <label htmlFor="password">Password </label>
-                                    <Field type="password" name="password" />
-                                    <ErrorMessage name="password" />
-                                </div>
-                                <button type="submit" disabled={isSubmitting}>
+
+                            margin={1}
+                            width="100%"
+                        >
+                            <Typography component="h1" variant="h5">
+                                Sign In
+                            </Typography>
+                            <Field
+                                as={CustomTextField}
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+
+
+                            />
+                            <ErrorMessage name="email" component="div" className={classes.error} />
+                            <Field
+                                as={CustomTextField}
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+
+
+                            />
+
+                            <ErrorMessage name="password" component="div" className={classes.error} />
+                            <Box
+                                display="flex"
+                                alignItems="center"
+                                marginTop={5}
+                                marginBottom={5}>
+                                <Button variant="contained" type="submit" disabled={isSubmitting}>
                                     Sign In
-                                </button>
-                                <button type="button" onClick={(e) => handleReset()}>
+                                </Button>
+                                <Button variant="outlined" type="reset">
                                     Reset
-                                </button>
-                            </Form>
-                        )}
-                    </Formik>
-                    <button type="button" onClick={(e) => handleSignUp()}>
-                        Not Registered?...Sign Up Here
-                    </button>
-                </div>
-                : <h2>Welcome, {loginUser.first_name}</h2>}
+                                </Button>
+                            </Box>
+                            <Button variant="text" onClick={handleSignUp}>
+                                Not Registered?...Sign Up Here
+                            </Button>
 
-        </div>
+                        </Form>
+
+                    )}
+                </Formik>
+                :
+                <Box
+                    display="flex"
+
+                >
+                    <Typography component="h2" variant="h5" color="primary">
+                        Welcome, {loginUser.first_name}!
+                    </Typography>
+
+
+                </Box>
+            }
+        </Box>
+
     );
 };
 
 export default SignIn;
+
+
+
